@@ -157,22 +157,19 @@ end;
 ### 逻辑运算符、关系运算符、位运算符
 _逻辑运算符_ 有 `and`、 `or`、 `not`、 `xor` 。他们接受参数和返回值都是 _boolean_ 。当接受的参数都是integer(整型)的时候他们会按照位运算并返回integer 类型结果。
 _关系运算符_ 有 `=` , `<>` , `>`, `<`, `\<=`, `>=` 。注意，Pascal中使用单个 `=` 来判断相等，赋值使用 `;=`。
-
-The _logical (or bit-wise) operators have a higher precedence than relational operators_. You may need to use parenthesis around some expressions to have the desired order of the calculations.
-
-For example this is a compilation error:
+_位运算符 比 关系运算符 有更高的优先级_ 。某些情况下你可能需要用括号来达到你想要的运算顺序。
+下面的例子会引发一个编译错误:
 
 [source,pascal]
 ----
 var
   A, B: Integer;
 begin
-  if A = 0 and B <> 0 then ... // INCORRECT example
+  if A = 0 and B <> 0 then ... // 错误示范
 ----
 
-The above fails to compile, because the compiler first wants to perform a bit-wise `and` in the middle of the expression: `(0 and B)`. This is a bit-wise operation which returns an integer value. Then the compiler applies `=` operator which yields a boolean value `A = (0 and B)`. And finally the _"type mismatch"_ error is risen after trying to compare the boolean value `A = (0 and B)` and integer value `0`.
-
-This is correct:
+上面的例子无法通过编译，因为编译器会优先进行位运算符 `and` ，计算 `(0 and B)` 并返回一个integer 类型的值。然后编译器去计算 `=` ，返回一个 `boolean` 类型的结果： `A = (0 and B)`。最终 _"type mismatch"_ 错误(类型不匹配)被引发。
+下面是一个正确的示例：
 
 [source,pascal]
 ----
@@ -182,32 +179,32 @@ begin
   if (A = 0) and (B <> 0) then ...
 ----
 
-The _short-circuit evaluation_ is used. Consider this expression:
+下面的例子展示了 _短路逻辑_ :
 
 [source,pascal]
 ----
 if MyFunction(X) and MyOtherFunction(Y) then...
 ----
 
-* It's guaranteed that `MyFunction(X)` will be evaluated first.
-* And if `MyFunction(X)` returns `false`, then the value of expression is known (the value of `false and whatever` is always `false`), and `MyOtherFunction(Y)` will not be executed at all.
-* Analogous rule is for `or` expression. There, if the expression is known to be `true` (because the 1st operand is `true`), the 2nd operand is not evaluated.
-* This is particularly useful when writing expressions like
+*  `MyFunction(X)` 会被先计算。
+* 如果 `MyFunction(X)` 返回了 `false`, 那么整个表达式的值都清楚了 ( `false and 任何值` 结果都是 `false`), 并且 `MyOtherFunction(Y)` 也不会被计算了。
+* 类似的规则适用于 `or` 。 如果第一个表达式的值是 `true` ，第二个表达式的值也不会被计算。
+* 在类似是下面的例子中这条规则很有用：
 +
 [source,pascal]
 ----
 if (A <> nil) and A.IsValid then...
 ----
 +
-This will work OK, even when `A` is `nil`. The keyword `nil` is a pointer equal to zero (when represented as a number). It is called a _null pointer_ in many other programming languages.
+上面的例子中即使 `A` 是 `nil` 也可以编译运行。  关键字 `nil` 是一个值为零的指针，通常也被叫做 _空指针_ (null pointer)。
 
 // * Using `and` between two boolean values is a logical `and`, and the result is boolean. In other words, the result is `true` only if both operands are `true`, otherwise it's `false`.
 
 // * Using `and` between two integer values is a bit-wise `and`, and the result is integer. The operands are converted to have the same number of bits, and a similar rule is performed bit-by-bit, setting each bit to `0` or `1`. If you do this with potentially negative integer values, you should understand how negative numbers are encoded in memory (_"two's complement"_).
 
-### Testing single expression for multiple values (case)
+### 具有多个值的表达式 (case)
 
-If a different action should be executed depending on the value of some expression, then the `case .. of .. end` statement is useful.
+如果一个表达式具有多个值，并且各个值决定不同的执行流程，那么使用 `case .. of .. end` 声明语句会很方便。
 
 [source,pascal]
 ----
@@ -224,29 +221,28 @@ case SomeValue of
 end;
 ----
 
-The `else` clause is optional (and corresponds to `default` in C-like languages). When no condition matches, and there's no `else`, then nothing happens.
+`else` 声明部分是可选的 (对应于C语言中的 `default`)。 如果所有的情况都没有匹配，而且也没有 `else`声明，那么将不会执行任何语句。
 
-In you come from C-like languages, and compare this with `switch` statement in these languages, you will notice that there is no automatic _fall-through_. This is a deliberate blessing in Pascal. You don't have to remember to place `break` instructions. In every execution, _at most one_ branch of the `case` is executed, that's it.
+如果你很熟悉C语言，比较一下其中的 `switch` ， 你会发现C语言没有自动 _跳过机制_。这是Pascal故意设计的特性，你也不需要去手动地放置 `break` 。 任何时候,  `case`分支下的语句 _至多被执行一次_ 。
 
-### Enumerated and ordinal types and sets and constant-length arrays
+### 枚举类型(Enumerated)、 有顺序类型(ordinal types)、集合类型(sets)、固定长度数组(constant-length arrays)
 
-Enumerated type in Pascal is a very nice, opaque type. You will probably use it much more often than enums in other languages:)
-
+枚举类型示例：
 [source,pascal]
 ----
 type
   TAnimalKind = (akDuck, akCat, akDog);
 ----
 
-The convention is to prefix the enum names with a two-letter shortcut of type name, hence `ak` = shortcut for _"Animal Kind"_. This is a useful convention, since the enum names are in the unit (global) namespace. So by prefixing them with `ak` prefix, you minimize the chances of collisions with other identifiers.
+命名约定枚举的成员应该使用类型名称的双字母缩写作为前缀，比如本例中的 `ak` 取自 _"Animal Kind"_ 两个首字母。 这是一个十分有用的约定, 尤其是枚举成员的定义都在unit中，这时枚举成员都是全局命名空间中。 添加前缀可以减少命名冲突。
 
-NOTE: The collisions in names are not a show-stopper. It's Ok for different units to define the same identifier. But it's a good idea to try to avoid the collisions anyway, to keep code simple to understand and grep.
+注意: 命名冲突不是一个非常严重的障碍。不同的unit中定义相同的标识符不会造成命名冲突。但是尽量避免命名冲突仍有必要，尤其是在增强代码可读性和检索中尤为重要。
 
-NOTE: You can avoid placing enum names in the global namespace by compiler directive `{$scopedenums on}`. This means you will have to access them qualified by a type name, like `TAnimalKind.akDuck`. The need for `ak` prefix disappears in this situation, and you will probably just call the enums `Duck, Cat, Dog`. This is similar to C# enums.
+注意: 你也可以使用编译选项 `{$scopedenums on}`来避免将枚举成员名称暴露为全局名称。但这样你就必须使用类型名称来索引枚举成员, 比如 `TAnimalKind.akDuck`. 这样的话枚举成员名称加前缀 `ak` 就不是那么必要了。
 
-The fact that enumerated type is _opaque_ means that it cannot be just assigned to and from an integer. However, for special use, you can use `Ord(MyAnimalKind)` to forcefully convert enum to int, or typecast `TAnimalKind(MyInteger)` to forcefully convert int to enum. In the latter case, make sure to check first whether `MyInteger` is in good range (0 to `Ord(High(TAnimalKind))`).
+枚举类型是一种 _不透明_ 类型 其中的成员是自动赋值的而且都是integer类型，你无法手动为他们赋值。当然,在特殊情况下，你可以使用 `Ord(MyAnimalKind) `把他们转化为整型，或者使用类型转换 `TAnimalKind(MyInteger) ` 把整型转成枚举类型。 在接下来的例子里，我们首先要确认 `MyInteger`是否在序列 (0 to `Ord(High(TAnimalKind)) `)中。
 
-Enumerated and ordinal types can be used as array indexes:
+枚举类型和有序类型都可以当作数组的下标:
 
 [source,pascal]
 ----
@@ -261,7 +257,7 @@ type
   TAnimalNames = array [TAnimalKind] of string;
 ----
 
-They can also be used to create sets (a bit-fields internally):
+这两种类型也可以用来生成集合类型(内部使用位字段):
 
 [source,pascal]
 ----
@@ -280,34 +276,32 @@ begin
 end;
 ----
 
-### Loops (for, while, repeat, for .. in)
+### 循环(for, while, repeat, for .. in)
 
 [source,pascal]
 ----
 include::code-samples/loops.lpr[]
 ----
+* `repeat` 和 `while` 循环语句 *:
 
-*About the `repeat` and `while` loops*:
+这两个循环语句有以下两点不同:
 
-There are two differences between these loop types:
+1. 循环条件相反. 对于 `while .. do` 你指定的是 _什么条件下继续执行循环_, 对于 `repeat .. until` 你指定的是 _什么时候停止循环_。
+2. 对于 `repeat`, _循环条件不是在一开始被检查_ ，所以 `repeat` 会至少执行一次。
 
-1. The loop condition has an opposite meaning. In `while .. do` you tell it _when to continue_, but in `repeat .. until` you tell it _when to stop_.
-2. In case of `repeat`, _the condition is not checked at the beginning_. So the `repeat` loop always runs at least once.
+* `for I := ...` 循环 *:
 
-*About the `for I := ...` loops*:
+ `for I := .. to .. do ...` 看起来很像 C语言的 `for` 循环。 但是他有更严格的约束, 比如你不能任意地控制循环的迭代元素。for 循环迭代对象必须是一组连续的数字或者有序类型。唯一可自主选择的是你可以使用 `downto` 替代 `to`来从大到小地遍历迭代序列。
 
-The `for I := .. to .. do ...` construction it similar to the C-like `for` loop. However, it's more constrained, as you cannot specify arbitrary actions/tests to control the loop iteration. This is strictly for iterating over a consecutive numbers (or other ordinal types). The only flexibility you have is that you can use `downto` instead of `to`, to make numbers go downward.
+正因为如此，For 循环不仅有良好的可读性，而且编译器很方便做优化。 _For 循环的上界和下界只会被计算一次_, 而且是在一开始就被计算了。
+需要注意的是这个形式中的计数变量 (`I` in this example) 再循环结束后就变成了 _ (未定义)undefined_ 。 循环结束后访问 `I` 变量会引发一个编译警告， _除非_ 你使用 `Break` 或 `Exit` 来提前结束循环：这时，计数变量将会保存最后被设置的值。
 
-In exchange, it looks clean, and is very optimized in execution. In particular, _the expressions for the lower and higher bound are only calculated once_, before the loop starts.
+* `for I in ...` 循环 *:
 
-Note that the value of the loop counter variable (`I` in this example) should be considered _undefined_ after the loop has finished, due to possible optimizations. Accessing the value of `I` after the loop may cause a compiler warning. _Unless_ you exit the loop prematurely by `Break` or `Exit`: in such case, the counter variable is guaranteed to retain the last value.
+ `for I in .. do ..` 和很多现代语言中的 `foreach` 看起来类似。它可以在很多类之类型中工作:
 
-*About the `for I in ...` loops*:
-
-The `for I in .. do ..` is similar to `foreach` construct in many modern languages. It works intelligently on many built-in types:
-
-* It can iterate over all values in the array (example above).
-* It can iterate over all possible values of an enumerated type:
+* 它可以遍历数组中的所有元素 (比如前面的例子).
+* 它还可以遍历枚举类型中的所有可能值:
 +
 [source,pascal]
 ----
@@ -316,7 +310,7 @@ var
 begin
   for AK in TAnimalKind do...
 ----
-* It can iterate over all items included in the set:
+* 还可以遍历集合类型中的所有元素:
 +
 [source,pascal]
 ----
@@ -327,20 +321,20 @@ begin
   Animals := [akDog, akCat];
   for AK in Animals do ...
 ----
-* And it works on custom list types, generic or not, like `TObjectList` or `TFPGObjectList`.
+* 它可以用来遍历自定义的序列类型、泛型。And it works on custom list types, generic or not, 比如 `TObjectList` 或 `TFPGObjectList`.
 +
 [source,pascal]
 ----
 include::code-samples/for_in_list.lpr[]
 ----
 +
-We didn't yet explain the concept of classes, so the last example may not be obvious to you yet -- just carry on, it will make sense later:)
+当我们接触类(class)的概念后最后一个例子就能理解了，现在可以先记住这个例子。
 
-### Output, logging
+### 输出(Output), 日志(logging)
 
-To simply output strings in Pascal, use the `Write` or `WriteLn` routine. The latter automatically adds a newline at the end.
+在Pascal中输出一个字串可以使用 `Write` or `WriteLn` 过程.  `WriteLn` 将会在字串末尾自动加上换行.
 
-This is a "magic" routine in Pascal. It takes a variable number of arguments and they can have any type. They are all converted to strings when displaying, with a special syntax to specify padding and number precision.
+这是一个 "神奇的" 过程. 它可以接受不定个数的参数，参数类型也可以是多种类型. 参数最终都被转化成字符串显示出来，还可以使用特定格式指定字串的对齐和数字显示的精度。
 
 [source,pascal]
 ----
@@ -350,21 +344,21 @@ WriteLn('You can pad an integer: ', 666:10);
 WriteLn('You can output a float: ', Pi:1:4);
 ----
 
-To explicitly use newline in the string, use the `LineEnding` constant (from FPC RTL). (The _Castle Game Engine_ defines also a shorter `NL` constant.) Pascal strings do not interpret any special backslash sequences, so writing
+如果要在字符串中显示地插入换行，使用 `LineEnding` (包含在 FPC RTL). (The _Castle Game Engine_ defines also a shorter `NL` constant.) Pascal不会把反斜线组合字串转义, 所以下面的写法不会像你想象的那样执行：
 
 [source,pascal]
 ----
-WriteLn('One line.\nSecond line.'); // INCORRECT example
+WriteLn('One line.\nSecond line.'); // 不正确的例子
 ----
 
-doesn't work like some of you would think. This will work:
+这个例子可以正确执行:
 
 [source,pascal]
 ----
 WriteLn('One line.' + LineEnding + 'Second line.');
 ----
 
-or just this:
+或者这样:
 
 [source,pascal]
 ----
@@ -372,7 +366,7 @@ WriteLn('One line.');
 WriteLn('Second line.');
 ----
 
-Note that this will only work in _console_ applications. Make sure you have `{$apptype CONSOLE}` (and *not* `{$apptype GUI}`) defined in your main program file. On some operating systems it actually doesn't matter and will work always (Unix), but on some operating systems trying to write something from a GUI application is an error (Windows).
+这种只能在 _命令行应用_ 中起效果. 在你的主程序文件中确保设置编译指令 `{$apptype CONSOLE}` ( * 不是 * `{$apptype GUI}`) . 某些平台这个指令设置与否不会影响 (比如Unix), 但是在某些平台 (比如Windows)上在GUI 应用中使用WriteLn会引发错误.
 
 *In the Castle Game Engine:* use `WriteLnLog` or `WriteLnWarning`, never `WriteLn`, to print debug information. They will be always directed to some useful output. On Unix, standard output. On Windows GUI application, log file. On Android, the _Android logging facility_ (visible when you use `adb logcat`). The use of `WriteLn` should be limited to the cases when you write a command-line application (like a 3D model converter / generator) and you know that the _standard output_ is available.
 
