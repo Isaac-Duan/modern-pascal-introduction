@@ -8,8 +8,7 @@ Michalis Kamburelis
 
 ## 前言
 市面上已经有不少介绍Pascal语言的书籍了，但是很多只是讲解传统Pascal语言，关于类、单元(模块)、泛型讲解甚少。有些书籍甚至成书于Pascal引入面向对象语法之前，有些书籍虽然讲解了Delphi，但是对于现代特性比如泛型却没有涉及。
-所以我要写一本关于* 现代Object Pascal *的快速入门书籍。大多数开发者
-So I wrote this quick introduction to what I call *modern Object Pascal*. Most of the programmers using it don't really call it _"modern Object Pascal"_, we just call it _"our Pascal"_. But when introducing the language, I feel it's important to emphasize that it's a modern, object-oriented language. It evolved a *lot* since the old (Turbo) Pascal that many people learned in schools long time ago. Feature-wise, it's quite similar to C++ or Java or C#.
+所以我要写一本关于* 现代Object Pascal *的快速入门书籍，重点讲解他的面向对象部分。
 
 * It has all the modern features you expect -- classes, units, interfaces, generics...
 * It's compiled to a fast, native code,
@@ -20,27 +19,26 @@ It also has excellent, portable and open-source compiler called the _Free Pascal
 
 This introduction is mostly directed at programmers who already have experience in other languages. We will not cover here the meanings of some universal concepts, like _"what is a class"_, we'll only show how to do them in Pascal.
 
-## Basics
+## 语法基础
 
-### "Hello world" program
+### "Hello world" 第一个程序
 
 [source,pascal]
 ----
 include::code-samples/hello_world.lpr[]
 ----
 
-This is a complete program that you can _compile_ and _run_.
+这就是第一个入门的程序，你可以 _编译_ 和 _执行_ 他。
 
-* If you use the command-line FPC, just create a new file `myprogram.lpr` and execute `fpc myprogram.lpr`.
-* If you use _Lazarus_, create a new project (menu _Project_ -> _New Project_ -> _Simple Program_). Save it as `myprogram` and paste this source code as the main file. Compile using the menu item _Run -> Compile_.
-* This is a command-line program, so in either case -- just run the compiled executable from the command-line.
+* 如果你在命令行中使用FPC，那你需要新建一个文件命名为 `myprogram.lpr` 然后执行命令 `fpc myprogram.lpr`.
+* 如果你使用 _Lazarus_, 则需要新建一个工程 (从菜单上执行 _Project_ -> _New Project_ -> _Simple Program_). 保存为 `myprogram` 并将上述代码粘贴入主文件中， 在菜单中执行 _Run -> Compile_.
+* 然后你就得到一个命令行的程序，你可以在命令行中编译并执行他。
 
-The rest of this article talks about the Object Pascal language, so don't expect to see anything more fancy than the command-line stuff. If you want to see something cool, just create a new GUI project in _Lazarus_ (_Project_ -> _New Project_ -> _Application_).
+本书其他本分将重点介绍Object Pascal语言本身。
 //Play around, drop some buttons on the form, handle their events (like `OnClick`).
-Voila -- a working GUI application, cross-platform, with native look everywhere, using a comfortable visual component library. The _Lazarus_ and _Free Pascal Compiler_ come with lots of ready units for networking, GUI, database, file formats (XML, json, images...), threading and everything else you may need. I already mentioned my cool _Castle Game Engine_ earlier:)
 // The libraries created in other languages (dll, so, dylib) can be easily used from FPC too (and for most of them, you'll find ready "header" units, and even units that wrap them in more modern object-oriented API).
 
-### Functions, procedures, primitive types
+### 函数、过程、基本数据类型
 
 [source,pascal]
 ----
