@@ -6,11 +6,9 @@ Michalis Kamburelis
 :source-highlighter: coderay
 :docinfo1:
 
-## Why
-
-There are many books and resources about Pascal out there, but too many of them talk about the old Pascal, without classes, units or generics.
-// Some of them talk about Pascal before it even had classes. Some of them show classes, as done in Delphi, but fail to mention more modern features, like generics.
-
+## 前言
+市面上已经有不少介绍Pascal语言的书籍了，但是很多只是讲解传统Pascal语言，关于类、单元(模块)、泛型讲解甚少。有些书籍甚至成书于Pascal引入面向对象语法之前，有些书籍虽然讲解了Delphi，但是对于现代特性比如泛型却没有涉及。
+所以我要写一本关于* 现代Object Pascal *的快速入门书籍。大多数开发者
 So I wrote this quick introduction to what I call *modern Object Pascal*. Most of the programmers using it don't really call it _"modern Object Pascal"_, we just call it _"our Pascal"_. But when introducing the language, I feel it's important to emphasize that it's a modern, object-oriented language. It evolved a *lot* since the old (Turbo) Pascal that many people learned in schools long time ago. Feature-wise, it's quite similar to C++ or Java or C#.
 
 * It has all the modern features you expect -- classes, units, interfaces, generics...
