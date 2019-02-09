@@ -238,9 +238,9 @@ type
 
 注意: 命名冲突不是一个非常严重的障碍。不同的unit中定义相同的标识符不会造成命名冲突。但是尽量避免命名冲突仍有必要，尤其是在增强代码可读性和检索中尤为重要。
 
-注意: 你也可以使用编译选项 `{$scopedenums on}`来避免将枚举成员名称暴露为全局名称。但这样你就必须使用类型名称来索引枚举成员, 比如 `TAnimalKind.akDuck`. 这样的话枚举成员名称加前缀 `ak` 就不是那么必要了。
+注意: 你也可以使用编译选项 ` {$scopedenums on} ` 来避免将枚举成员名称暴露为全局名称。但这样你就必须使用类型名称来索引枚举成员, 比如 ` TAnimalKind.akDuck `. 这样的话枚举成员名称加前缀 `ak ` 就不是那么必要了。
 
-枚举类型是一种 _不透明_ 类型 其中的成员是自动赋值的而且都是integer类型，你无法手动为他们赋值。当然,在特殊情况下，你可以使用 `Ord(MyAnimalKind) `把他们转化为整型，或者使用类型转换 `TAnimalKind(MyInteger) ` 把整型转成枚举类型。 在接下来的例子里，我们首先要确认 `MyInteger`是否在序列 (0 to `Ord(High(TAnimalKind)) `)中。
+枚举类型是一种 _不透明_ 类型 其中的成员是自动赋值的而且都是integer类型，你无法手动为他们赋值。当然,在特殊情况下，你可以使用 `Ord(MyAnimalKind) ` 把他们转化为整型，或者使用类型转换 ` TAnimalKind(MyInteger) ` 把整型转成枚举类型。 在接下来的例子里，我们首先要确认 ` MyInteger ` 是否在序列 (0 to ` Ord(High(TAnimalKind)) ` )中。
 
 枚举类型和有序类型都可以当作数组的下标:
 
@@ -289,16 +289,16 @@ include::code-samples/loops.lpr[]
 1. 循环条件相反. 对于 `while .. do` 你指定的是 _什么条件下继续执行循环_, 对于 `repeat .. until` 你指定的是 _什么时候停止循环_。
 2. 对于 `repeat`, _循环条件不是在一开始被检查_ ，所以 `repeat` 会至少执行一次。
 
-* `for I := ...` 循环 *:
+* `for I := ...` 循环 * :
 
- `for I := .. to .. do ...` 看起来很像 C语言的 `for` 循环。 但是他有更严格的约束, 比如你不能任意地控制循环的迭代元素。for 循环迭代对象必须是一组连续的数字或者有序类型。唯一可自主选择的是你可以使用 `downto` 替代 `to`来从大到小地遍历迭代序列。
+`for I := .. to .. do ...` 看起来很像 C语言的 `for` 循环。 但是他有更严格的约束, 比如你不能任意地控制循环的迭代元素。for 循环迭代对象必须是一组连续的数字或者有序类型。唯一可自主选择的是你可以使用 `downto` 替代 `to`来从大到小地遍历迭代序列。
 
 正因为如此，For 循环不仅有良好的可读性，而且编译器很方便做优化。 _For 循环的上界和下界只会被计算一次_, 而且是在一开始就被计算了。
 需要注意的是这个形式中的计数变量 (`I` in this example) 再循环结束后就变成了 _ (未定义)undefined_ 。 循环结束后访问 `I` 变量会引发一个编译警告， _除非_ 你使用 `Break` 或 `Exit` 来提前结束循环：这时，计数变量将会保存最后被设置的值。
 
 * `for I in ...` 循环 *:
 
- `for I in .. do ..` 和很多现代语言中的 `foreach` 看起来类似。它可以在很多类之类型中工作:
+ `for I in .. do ..` 和很多现代语言中的 `foreach` 看起来类似。它适用于多种类型:
 
 * 它可以遍历数组中的所有元素 (比如前面的例子).
 * 它还可以遍历枚举类型中的所有可能值:
@@ -366,68 +366,68 @@ WriteLn('One line.');
 WriteLn('Second line.');
 ----
 
-这种只能在 _命令行应用_ 中起效果. 在你的主程序文件中确保设置编译指令 `{$apptype CONSOLE}` ( * 不是 * `{$apptype GUI}`) . 某些平台这个指令设置与否不会影响 (比如Unix), 但是在某些平台 (比如Windows)上在GUI 应用中使用WriteLn会引发错误.
+这种只能在 _命令行应用_ 中起效果. 在你的主程序文件中确保设置编译指令 ` {$apptype CONSOLE} ` ( * 不是 * ` {$apptype GUI} ` ) . 某些平台这个指令设置与否不会影响 (比如Unix), 但是在某些平台 (比如Windows)上在GUI 应用中使用WriteLn会引发错误.
 
 *In the Castle Game Engine:* use `WriteLnLog` or `WriteLnWarning`, never `WriteLn`, to print debug information. They will be always directed to some useful output. On Unix, standard output. On Windows GUI application, log file. On Android, the _Android logging facility_ (visible when you use `adb logcat`). The use of `WriteLn` should be limited to the cases when you write a command-line application (like a 3D model converter / generator) and you know that the _standard output_ is available.
 
-### Converting to a string
+### 转化成字符串
 
-To convert an arbitrary number of arguments to a string (instead of just directly outputting them), you have a couple of options.
+要把一个数字类型转成字符串类型(不仅仅是在屏幕上输出他们)，有很多方法。
+* 你可以使用内置的一些函数(比如： `IntToStr` 、 `FloatToStr` )把特定类型的变量转成字符串，你还可以使用 `+` 运算符把两个字符串连接起来。例如可以这样创建字符串：  `'My int number is ' + IntToStr(MyInt) + ', and the value of Pi is ' + FloatToStr(Pi)` 。
+** _优点一_: 使用非常灵活。 系统内置了很多形如 `XxxToStr` 函数及其他类似函数 (比如 `FormatFloat`), 可以满足多种类型转换需求.
+// 在格式化字串方式上有很大的灵活性.
+** _优点二_: 如果要使用相反的功能， 比如把一个字符串转换成 `integer` 或 `float`，你可以很容易地知道要使用 `StrToInt`, `StrToFloat` 以及其他类似函数 (比如 `StrToIntDef`) .
+** _缺点_: 带有太多的 `XxxToStr` ，代码看起来不美观。
+//对于class 类型，可以重载 `TObject.ToString` 方法。
+//使用类型转换函数不如 `Format` 函数那样具有清晰的 _模式参数分离_ 的形式。
 
-* You can convert particular types to strings using specialized functions like `IntToStr` and `FloatToStr`. Furthermore, you can concatenate strings in Pascal simply by adding them. So you can create a string like this: `'My int number is ' + IntToStr(MyInt) + ', and the value of Pi is ' + FloatToStr(Pi)`.
-** _Advantage_: Absolutely flexible. There are many `XxxToStr` overloaded versions and friends (like `FormatFloat`), covering many types.
-// They give you a lot of flexibility in formatting.
-** _Another advantage_: Consistent with the reverse functions. To convert a string (for example, user input) back to an integer or float, you use `StrToInt`, `StrToFloat` and friends (like `StrToIntDef`).
-** _Disadvantage_: A long concatenation of many `XxxToStr` calls and strings doesn't look nice.
-//For classes, they can override the `TObject.ToString` method.
-//It doesn't have that clean _separation of pattern and arguments_ property of `Format` call.
-
-* The `Format` function, used like `Format('%d %f %s', [MyInt, MyFloat, MyString])`. This is like `sprintf` function in the C-like languages. It inserts the arguments into the placeholders in the pattern. The placeholders may use special syntax to influence formatting, e.g. `%.4f` results in a floating-point format with 4 digits after the decimal point.
-** _Advantage_: The separation of _pattern_ string from _arguments_ looks clean. If you need to change the pattern string without touching the arguments (e.g. when translating), you can do it easily.
-** _Another advantage_: No compiler magic. You can use the same syntax to pass any number of arguments of an arbitrary type in your own routines (declare parameter as an `array of const`). You can then pass these arguments downward to `Format`, or deconstruct the list of parameters and do anything you like with them.
-** _Disadvantage_: Compiler does not check whether the pattern matches the arguments. Using a wrong placeholder type will result in an exception at runtime (`EConvertError` exception, not anything nasty like a segmentation fault).
+* `Format` 使用形式为 `Format('%d %f %s', [MyInt, MyFloat, MyString])`. 这种和C语言中的 `sprintf` 类似. 这种模式会把参数插入占位符. 占位符本身可以使用特殊语法来指定字符串的格式, 例如 `%.4f` 表示一个浮点型数值，小数点后面有4位小数.
+** _优点一_: 字串 _格式_ 与 _参数_ 的分离使得代码看起来清晰。 如果你仅仅只想改变字串的显示方式而不用更改参数的时候就很方便。
+** _优点二_: 无需特殊编译魔法. 你可以使用类似的语法来传递任意数量的参数到你的自己定义的过程中(将参数声明为 `array of const`). 参数列表可以被包装到[]中传入，然后可以在解包参数列表使用每个参数。You can then pass these arguments downward to `Format`, or deconstruct the list of parameters and do anything you like with them.
+** _缺点_: 编译器不会检查模式与参数是否匹配，如果使用了与参数不兼容的占位符，会引发运行时错误 ( `EConvertError` 异常, 而不是段错误).
 //Note that, unlike the C `sprintf`, the correctness at runtime can be completely verified (there are no dirty pointer tricks inside
 
-* `WriteStr(TargetString, ...)` routine behaves much like `Write(...)`, except that the result is saved to the `TargetString`.
-** _Advantage_: It supports all the features of `Write`, including the special syntax for formatting like `Pi:1:4`.
-** _Disadvantage_: The special syntax for formatting is a "compiler magic", implemented specifically for routines like this. This is sometimes troublesome, e.g. you cannot create your own routine `MyStringFormatter(...)` that would also allow the special syntax like `Pi:1:4`. For this reason (and also because it wasn't implemented for a long time in major Pascal compilers), this construction is not very popular.
+* `WriteStr(TargetString, ...)` 过程类似于 `Write(...)`, 不同点在于前者将结果保存在 `TargetString`.
+** _优点_: 支持 `Write`的所有特性, 包括字串的格式化方式，比如 `Pi:1:4`.
+** _缺点_: 字符串格式化方式是一种 "编译魔法", 是针对这些过程的特有实现. 这种方式会带来一些麻烦，比如你无法实现自己的类似功能的 `MyStringFormatter(...)` 过程. 正因为如此(另外很长时间内主流Pascal 编译器都没有实现这个过程)这个方法不是非常流行。
 
-## Units
+## 单元(Units)
 
-Units allow you to group common stuff (anything that can be declared), for usage by other units and programs. They are equivalent to _modules_ and _packages_ in other languages. They have an interface section, where you declare what is available for other units and programs, and then the implementation. Save unit `MyUnit` as `myunit.pas` (lowercase with `.pas` extension).
+单元允许你把一组操作打包到一个文件中，这样别人就能在自己的程序中使用你的单元。这就相当于其他语言中的 _模块_ 、 _包_。单元含有 接口(interface)区域(在接口区域你可以定义暴露给其他开发者使用的)和 实现区域(implementation)。单元文件名应该是单元名小写，用 .pas 作为扩展名。
 
 [source,pascal]
 ----
 include::code-samples/myunit.pas[]
 ----
 
-Final programs are saved as `myprogram.lpr` files (`lpr` = Lazarus program file; in Delphi you would use `.dpr`). Note that other conventions are possible here, e.g. some projects just use `.pas` for main program file, some use `.pp` for units or programs. I advise using `.pas` for units and `.lpr` for FPC/Lazarus programs.
+主体程序部分应当放在名称如 `myprogram.lpr` 的文件中 (`lpr` 是 Lazarus 的主程序文件; 对于 Delphi 是 `.dpr`). 还有一些其他的命名方式，比如有些编译器直接使用 `.pas` 作为主程序文件, 有些使用 `.pp` 作为单元文件或主程序文件. 我建议使用 `.pas` 作为单元文件， `.lpr` 作为FPC/Lazarus的主程序文件.
 
-A program can use a unit by a `uses` keyword:
+使用关键字 `uses` 可以引入单元文件:
 
 [source,pascal]
 ----
 include::code-samples/myunit_test.lpr[]
 ----
 
-A unit may also contain `initialization` and `finalization` sections. This is the code executed when the program starts and ends.
+一个单元文件也可以包含 `initialization` 和 `finalization` 代码片段. 其中的部分分别规定了程序开始执行和结束时要执行的代码。
 
 [source,pascal]
 ----
 include::code-samples/initialization_finalization.pas[]
 ----
 
-### Units using each other
+### 单元文件相互引用
 
-One unit can also use another unit. Another unit can be used in the interface section, or only in the implementation section. The former allows to define new public stuff (procedures, types...) on top of another unit's stuff. The latter is more limited (if you use a unit only in the implementation section, you can use its identifiers only in your implementation).
+一个unit 可以引入另一个unit. 单元文件可以在 interface 中引入, 也可以在 implementation 引入. 在interface 中引入你还可以在其他unit 的代码前定义新的公有的(public)代码片段(procedures, types...). 在implementation 中引入则有限制性，只允许你在implementation 中使用引入的unit中的标识符。
 
 [source,pascal]
 ----
 include::code-samples/anotherunit.pas[]
 ----
 
-It is not allowed to have _circular unit dependencies in the interface_. That is, two units cannot use each other in the interface section.
-//that everything must be declared before it's used.
+_在interface代码段中循环引入unit_ 是被禁止的. 也就是说两个 unit 不能在各自的interface片段中同时相互引用对方.
+//所有标识符使用前必须先被声明.
+原因在于编译器要先"理解"所有的在interface 中被引用的unit，这样Pascal 编译器就能快速地完成编译并且检测到 _哪些unit 需要被重新编译_ 。这样就无需借助 ``Makefile`` 即可完成简单的项目的编译任务，也可以保证所有的依赖项都能被正确地更新，而无需 _重新编译所有文件_.
 The reason is that in order to "understand"
 //(e.g. determine the memory layout of all the structures)
 the interface section of a unit, the compiler must first "understand" all the units it uses in the interface section. Pascal language follows this rule strictly, and it allows a fast compilation and fully automatic detection on the compiler side _what units need to be recompiled_. There is no need to use complicated ``Makefile`` files for a simple task of compilation in Pascal, and there is no need to _recompile everything_ just to make sure that all dependencies are updated correctly.
