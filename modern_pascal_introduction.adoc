@@ -44,9 +44,7 @@ include::code-samples/hello_world.lpr[]
 ----
 include::code-samples/functions_primitives.lpr[]
 ----
-
-To return a value from a function, assign something to the magic `Result` variable. You can read and set the `Result` freely, just like a local variable.
-
+通过对内置变量 `Result` 赋值可以设置函数的返回值。你也可以像对待局部变量那样任意使用变量 `Result`。
 [source,pascal]
 ----
 function MyFunction(const S: string): string;
@@ -56,11 +54,8 @@ begin
   Result := Result + ' and more!';
 end;
 ----
-
-You can also treat the function name (like `MyFunction` in example above) as the variable, to which you can assign. But I would discourage it in new code, as it looks "fishy" when used on the right side of the assignment expression. Just use `Result` always when you want to read or set the function result.
-
-If you want to call the function itself recursively, you can of course do it. If you're calling a parameter-less function recursively, be sure to specify the parenthesis `()` (even though in Pascal you can usually omit the parentheses for a parameter-less function), this makes a recursive call to a parameter-less function different from accessing this function's current result. Like this:
-
+你也可以用函数名来设置返回值(就像上面的例子中的 `MyFunction`)，但是我不建议那样做。
+你可以递归调用函数自身。如果你递归调用无参数函数，请显示地在函数名后面跟上括号 `()` 。这样Pascal就知道你是调用函数，而不是取出当前的返回值。例如:
 [source,pascal]
 ----
 function ReadIntegersUntilZero: string;
@@ -73,8 +68,7 @@ begin
     Result := Result + ' ' + ReadIntegersUntilZero();
 end;
 ----
-
-You can call `Exit` to end the execution of the procedure or function before it reaches the final `end;`. If you call parameter-less `Exit` in a function, it will return the last thing you set as `Result`. You can also use `Exit(X)` construct, to set the function result and exit *now* -- this is just like `return X` construct in C-like languages.
+函数和过程在遇到 `end;` 后会结束调用，你可以使用 `Exit` 来提前结束函数或过程的执行。如果在函数中使用无参数的 `Exit`，函数将返回最后设置的 `Result` 值。你也可以使用 `Exit(X)` 来设置返回值为X并 *立即* 结束当前函数的执行。
 
 [source,pascal]
 ----
@@ -85,9 +79,7 @@ begin
   Result := ExistingNames + ', ' + NewName;
 end;
 ----
-
-Note that the function result can be discarded. Any function may be used just like a procedure. This makes sense if the function has some _side effect_ (e.g. it modifies a global variable) besides calculating the result. For example:
-
+注意：函数的返回值可以被丢弃，函数也可以像过程那样被使用。这可能使得函数有一些计算返回值以外功能的 _副作用_(比如修改全局变量)。例如：
 [source,pascal]
 ----
 var
@@ -102,14 +94,14 @@ end;
 
 begin
   Count := 10;
-  CountMe; // the function result is discarded, but the function is executed
-  MyCount := CountMe; // use the result of the function
+  CountMe; // 函数被调用了，但是返回值被丢弃了
+  MyCount := CountMe; // 使用了函数的返回值
 end.
 ----
 
-### Testing (if)
+### 条件判断语句 (if)
 
-Use `if .. then` or `if .. then .. else` to run some code when some condition is satisfied. Unlike in the C-like languages, in Pascal you don't have to wrap the condition in parenthesis.
+使用 `if .. then` 或者 `if .. then .. else` 来指定只有条件满足才会执行的语句。无需像C语言那样把条件语句放入括号中。
 
 [source,pascal]
 ----
@@ -140,7 +132,7 @@ begin
 end;
 ----
 
-The `else` is paired with the last `if`. So this works as you expect:
+`else` 总是与最后的 `if` 成对出现。例如:
 
 [source,pascal]
 ----
@@ -150,9 +142,7 @@ if A <> 0 then
   else
     AIsNonzeroButBIsZero;
 ----
-
-While the example with nested `if` above is correct, it is often better to place the nested `if` inside a `begin` ... `end` block in such cases. This makes the code more obvious to the reader, and it will remain obvious even if you mess up the indentation. The improved version of the example is below. When you add or remove some `else` clause in the code below, it's obvious to which condition it will apply (to the `A` test or the `B` test), so it's less error-prone.
-
+上面代码中嵌套的 `if` 是合法的。这种情况下通常将内嵌的 `if` 放入 `begin` ... `end` 语句块中，这样代码看起来更易读。下面是改进的写法，即使你添加或删除一些 `else` 声明，哪些语句会被执行也是一目了然。
 [source,pascal]
 ----
 if A <> 0 then
@@ -164,11 +154,9 @@ begin
 end;
 ----
 
-### Logical, relational and bit-wise operators
-
-The _logical operators_ are called `and`, `or`, `not`, `xor`. Their meaning is probably obvious (search for _"exclusive or"_ if you're unsure what _xor_ does:)). They take _boolean arguments_, and return a _boolean_. They can also act as _bit-wise operators_ when both arguments are integer values, in which case they return an integer.
-
-The _relational (comparison)_ operators are `=`, `<>`, `>`, `<`, `\<=`, `>=`. If you're accustomed to C-like languages, note that in Pascal you compare two values (check are they equal) using a single equality character `A = B` (unlike in C where you use `A == B`). The special _assignment_ operator in Pascal is `:=`.
+### 逻辑运算符、关系运算符、位运算符
+_逻辑运算符_ 有 `and`、 `or`、 `not`、 `xor` 。他们接受参数和返回值都是 _boolean_ 。当接受的参数都是integer(整型)的时候他们会按照位运算并返回integer 类型结果。
+_关系运算符_ 有 `=` , `<>` , `>`, `<`, `\<=`, `>=` 。注意，Pascal中使用单个 `=` 来判断相等，赋值使用 `;=`。
 
 The _logical (or bit-wise) operators have a higher precedence than relational operators_. You may need to use parenthesis around some expressions to have the desired order of the calculations.
 
